@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:blockchain_utils/blockchain_utils.dart';
 import 'package:test/test.dart';
 
