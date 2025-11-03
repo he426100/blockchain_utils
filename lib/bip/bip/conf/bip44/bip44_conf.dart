@@ -820,6 +820,32 @@ class Bip44Conf {
     addrParams: {},
   );
 
+  /// Configuration for Conflux
+  static final BipCoinConfig conflux = BipCoinConfig(
+    coinNames: CoinsConf.conflux.coinName,
+    coinIdx: Slip44.conflux,
+    chainType: ChainType.mainnet,
+    defPath: derPathNonHardenedFull,
+    keyNetVer: bip44BtcKeyNetVerMain,
+    wifNetVer: null,
+    type: EllipticCurveTypes.secp256k1,
+    addressEncoder: ([dynamic kwargs]) => EthAddrEncoder(),
+    addrParams: {},
+  );
+
+  /// Configuration for Conflux Testnet
+  static final BipCoinConfig confluxTestnet = BipCoinConfig(
+    coinNames: CoinsConf.conflux.coinName,
+    coinIdx: Slip44.testnet,
+    chainType: ChainType.testnet,
+    defPath: derPathNonHardenedFull,
+    keyNetVer: bip44BtcKeyNetVerTest,
+    wifNetVer: null,
+    type: EllipticCurveTypes.secp256k1,
+    addressEncoder: ([dynamic kwargs]) => EthAddrEncoder(),
+    addrParams: {},
+  );
+
   /// Configuration for Harmony One (Metamask address)
   static final BipCoinConfig harmonyOneMetamask = BipCoinConfig(
     coinNames: CoinsConf.harmonyOne.coinName,

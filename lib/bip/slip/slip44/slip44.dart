@@ -87,6 +87,7 @@ class Slip44 {
   static const int bandProtocol = 494;
   static const int theta = 500;
   static const int solana = 501;
+  static const int conflux = 503;
   static const int elrond = 508;
   static const int secretNetwork = 529;
   static const int nineChronicles = 567;

@@ -207,6 +207,12 @@ class Bip44Coins extends BipCoins {
   /// Filecoin
   static const filecoin = Bip44Coins._('filecoin');
 
+  /// Conflux
+  static const conflux = Bip44Coins._('conflux');
+
+  /// Conflux Testnet
+  static const confluxTestnet = Bip44Coins._('confluxTestnet');
+
   /// Harmony One Atom
   static const harmonyOneAtom = Bip44Coins._('harmonyOneAtom');
 
@@ -481,6 +487,8 @@ class Bip44Coins extends BipCoins {
     Bip44Coins.ethereumClassic: Bip44Conf.ethereumClassic,
     Bip44Coins.fantomOpera: Bip44Conf.fantomOpera,
     Bip44Coins.filecoin: Bip44Conf.filecoin,
+    Bip44Coins.conflux: Bip44Conf.conflux,
+    Bip44Coins.confluxTestnet: Bip44Conf.confluxTestnet,
     Bip44Coins.harmonyOneAtom: Bip44Conf.harmonyOneAtom,
     Bip44Coins.harmonyOneEth: Bip44Conf.harmonyOneEth,
     Bip44Coins.harmonyOneMetamask: Bip44Conf.harmonyOneMetamask,

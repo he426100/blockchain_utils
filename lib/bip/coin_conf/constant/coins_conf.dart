@@ -390,6 +390,14 @@ class CoinsConf {
     ),
   );
 
+  /// Configuration for Conflux
+  static const CoinConf conflux = CoinConf(
+    coinName: CoinNames("Conflux", "CFX"),
+    params: CoinParams(
+      addrPrefix: "cfx:",
+    ),
+  );
+
   /// Configuration for generic Substrate coin
   static const CoinConf genericSubstrate = CoinConf(
       coinName: CoinNames("Generic Substrate", ""),
