@@ -836,7 +836,7 @@ class Bip44Conf {
   /// Configuration for Conflux Testnet
   static final BipCoinConfig confluxTestnet = BipCoinConfig(
     coinNames: CoinsConf.conflux.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.conflux,
     chainType: ChainType.testnet,
     defPath: derPathNonHardenedFull,
     keyNetVer: bip44BtcKeyNetVerTest,
