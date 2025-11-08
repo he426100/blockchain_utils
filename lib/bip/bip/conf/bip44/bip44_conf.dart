@@ -769,9 +769,12 @@ class Bip44Conf {
   );
 
   /// Configuration for EthereumTestnet
+  /// ETH and all ETH-compatible chains use the same derivation path
+  /// m/44'/60'/0'/0/0 for both mainnet and testnet
+  /// This is consistent with MetaMask and other standard wallets
   static final BipCoinConfig ethereumTestnet = BipCoinConfig(
     coinNames: CoinsConf.ethereum.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.ethereum,
     chainType: ChainType.testnet,
     defPath: derPathNonHardenedFull,
     keyNetVer: bip44BtcKeyNetVerMain,
