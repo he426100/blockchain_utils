@@ -1249,7 +1249,7 @@ class Bip44Conf {
   /// Configuration for Ripple testnet
   static final BipCoinConfig rippleTestnet = BipCoinConfig(
     coinNames: CoinsConf.ripple.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.ripple,
     chainType: ChainType.testnet,
     defPath: derPathNonHardenedFull,
     keyNetVer: bip44BtcKeyNetVerMain,
@@ -1278,7 +1278,7 @@ class Bip44Conf {
   /// Configuration for Ripple testnet
   static final BipCoinConfig rippleTestnetEd25519 = BipCoinConfig(
     coinNames: CoinsConf.ripple.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.ripple,
     chainType: ChainType.testnet,
     defPath: derPathHardenedFull,
     keyNetVer: bip44BtcKeyNetVerMain,
@@ -1324,7 +1324,7 @@ class Bip44Conf {
     coinNames: CoinsConf.solana.coinName,
     coinIdx: Slip44.solana,
     chainType: ChainType.mainnet,
-    defPath: derPathHardenedShort,
+    defPath: "0'/0'",
     keyNetVer: bip44BtcKeyNetVerMain,
     wifNetVer: null,
     type: EllipticCurveTypes.ed25519,
@@ -1335,9 +1335,9 @@ class Bip44Conf {
   /// Configuration for Solana
   static final BipCoinConfig solanaTestnet = BipCoinConfig(
     coinNames: CoinsConf.solana.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.solana,
     chainType: ChainType.testnet,
-    defPath: derPathHardenedShort,
+    defPath: "0'/0'",
     keyNetVer: bip44BtcKeyNetVerMain,
     wifNetVer: null,
     type: EllipticCurveTypes.ed25519,
@@ -1428,7 +1428,7 @@ class Bip44Conf {
   /// Configuration for Tron testnet
   static final BipCoinConfig tronTestnet = BipCoinConfig(
     coinNames: CoinsConf.tron.coinName,
-    coinIdx: Slip44.testnet,
+    coinIdx: Slip44.tron,
     chainType: ChainType.testnet,
     defPath: derPathNonHardenedFull,
     keyNetVer: bip44BtcKeyNetVerMain,
