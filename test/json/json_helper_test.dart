@@ -94,6 +94,8 @@ void main() {
     });
 
     test("list", () {
+      expect(testVector.valueAsList<List<dynamic>>("list"), ["a", "b"]);
+      expect(testVector.valueAsList<List>("list"), ["a", "b"]);
       expect(testVector.valueAsList<List<String>>("list"), ["a", "b"]);
       expect(testVector.valueAsList<List<String>?>("notexists"), null);
       expect(testVector.valueAsList<List<Object>>("listDynamic"), ["a", 1]);
