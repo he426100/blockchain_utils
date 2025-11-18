@@ -112,6 +112,18 @@ class Bip32Slip10Secp256k1 extends Bip32Base {
       assert(!isPublicOnly);
       final result =
           keyDerivator.ckdPriv(privateKey, publicKey, index, curveType);
+
+      // 性能优化: 同时计算公钥,避免后续从私钥重新计算
+      // 对于非hardened派生,可以用ckdPub计算公钥
+      // 对于hardened派生,仍需要从新私钥计算公钥
+      List<int>? derivedPubKey;
+      if (!index.isHardened) {
+        // 非hardened: 使用ckdPub计算公钥(与私钥派生共享相同的il值)
+        final pubResult = keyDerivator.ckdPub(publicKey, index, curveType);
+        derivedPubKey = pubResult.item1;
+      }
+      // hardened派生: derivedPubKey保持为null,后续从私钥计算
+
       return Bip32Slip10Secp256k1._(
           keyData: Bip32KeyData(
             chainCode: Bip32ChainCode(result.item2),
@@ -121,7 +133,7 @@ class Bip32Slip10Secp256k1 extends Bip32Base {
           ),
           keyNetVer: keyNetVersions,
           privKey: result.item1,
-          pubKey: null);
+          pubKey: derivedPubKey);
     }
 
     // Check if supported
