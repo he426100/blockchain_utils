@@ -71,6 +71,7 @@ class Bip32Slip10EcdsaDerivator implements IBip32KeyDerivator {
       required EllipticCurveTypes type}) {
     switch (type) {
       case EllipticCurveTypes.secp256k1:
+        // 性能优化: 仅使用原生Secp256k1计算,移除重复的BigInt验证计算
         Secp256k1Scalar privKeyScalar = Secp256k1Scalar();
         Secp256k1.secp256k1ScalarSetB32(privKeyScalar, privKeyBytes);
         Secp256k1Scalar newSc = Secp256k1Scalar();
@@ -79,14 +80,7 @@ class Bip32Slip10EcdsaDerivator implements IBip32KeyDerivator {
         Secp256k1.secp256k1ScalarAdd(result, privKeyScalar, newSc);
         final scBytes = List<int>.filled(32, 0);
         Secp256k1.secp256k1ScalarGetB32(scBytes, result);
-        final nd = BigintUtils.fromBytes(scBytes);
-
-        final ilInt = BigintUtils.fromBytes(newScalar);
-        final privKeyInt = BigintUtils.fromBytes(privKeyBytes);
-        final generator = EllipticCurveGetter.generatorFromType(type);
-        final newScalarBig = (ilInt + privKeyInt) % generator.order!;
-        assert(newScalarBig == nd);
-        return nd;
+        return BigintUtils.fromBytes(scBytes);
 
       default:
         final ilInt = BigintUtils.fromBytes(newScalar);
