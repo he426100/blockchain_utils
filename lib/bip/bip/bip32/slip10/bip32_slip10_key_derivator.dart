@@ -65,6 +65,40 @@ class Bip32Slip10EcdsaDerivator implements IBip32KeyDerivator {
     return Tuple(newPrivKeyBytes, irBytes);
   }
 
+  /// 非hardened派生优化: 一次HMAC同时返回私钥和公钥字节
+  ///
+  /// 对于非hardened索引,ckdPriv和ckdPub使用相同的输入数据,
+  /// 因此可以共享HMAC计算。返回私钥字节后,调用方可以通过
+  /// 现有的IPrivateKey.publicKey机制计算公钥,避免ckdPub中
+  /// 昂贵的椭圆曲线点运算(generator * ilInt + pubKey.point)。
+  ///
+  /// Returns: Tuple(新私钥字节, 新chainCode)
+  Tuple<List<int>, List<int>> ckdPrivNonHardened(
+      Bip32PrivateKey privKey,
+      Bip32PublicKey pubKey,
+      Bip32KeyIndex index,
+      EllipticCurveTypes type) {
+    assert(!index.isHardened,
+        "ckdPrivNonHardened only supports non-hardened indices");
+
+    // 1. 计算HMAC (与ckdPriv相同,非hardened使用公钥)
+    final dataBytes =
+        List<int>.from([...pubKey.compressed, ...index.toBytes()]);
+    final hmacHalves = QuickCrypto.hmacSha512HashHalves(
+        privKey.chainCode.toBytes(), dataBytes);
+
+    final ilBytes = hmacHalves.item1;
+    final irBytes = hmacHalves.item2;
+
+    // 2. 计算新私钥 (与ckdPriv相同)
+    final scalar =
+        _addScalar(privKeyBytes: privKey.raw, newScalar: ilBytes, type: type);
+    final newPrivKeyBytes = BigintUtils.toBytes(scalar,
+        order: Endian.big, length: privKey.privKey.length);
+
+    return Tuple(newPrivKeyBytes, irBytes);
+  }
+
   BigInt _addScalar(
       {required List<int> privKeyBytes,
       required List<int> newScalar,

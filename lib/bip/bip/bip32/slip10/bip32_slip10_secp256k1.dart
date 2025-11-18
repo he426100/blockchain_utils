@@ -110,30 +110,41 @@ class Bip32Slip10Secp256k1 extends Bip32Base {
             'Private child derivation with not-hardened index is not supported');
       }
       assert(!isPublicOnly);
-      final result =
-          keyDerivator.ckdPriv(privateKey, publicKey, index, curveType);
 
-      // 性能优化: 同时计算公钥,避免后续从私钥重新计算
-      // 对于非hardened派生,可以用ckdPub计算公钥
-      // 对于hardened派生,仍需要从新私钥计算公钥
-      List<int>? derivedPubKey;
+      // 性能优化第三阶段: 非hardened派生避免重复HMAC和点运算
+      // 只计算一次HMAC,然后通过IPrivateKey.publicKey计算公钥
       if (!index.isHardened) {
-        // 非hardened: 使用ckdPub计算公钥(与私钥派生共享相同的il值)
-        final pubResult = keyDerivator.ckdPub(publicKey, index, curveType);
-        derivedPubKey = pubResult.item1;
-      }
-      // hardened派生: derivedPubKey保持为null,后续从私钥计算
+        final result = (keyDerivator as Bip32Slip10EcdsaDerivator)
+            .ckdPrivNonHardened(privateKey, publicKey, index, curveType);
 
-      return Bip32Slip10Secp256k1._(
+        // 使用fromPrivateKey构造,会自动从私钥计算公钥
+        // 这比ckdPub的点运算(generator * ilInt + pubKey.point)快
+        return Bip32Slip10Secp256k1.fromPrivateKey(
+          result.item1, // 新私钥字节
           keyData: Bip32KeyData(
-            chainCode: Bip32ChainCode(result.item2),
+            chainCode: Bip32ChainCode(result.item2), // 新chainCode
             depth: depth.increase(),
             index: index,
             parentFingerPrint: fingerPrint,
           ),
           keyNetVer: keyNetVersions,
-          privKey: result.item1,
-          pubKey: derivedPubKey);
+        );
+      } else {
+        // Hardened派生: 使用原有逻辑
+        final result =
+            keyDerivator.ckdPriv(privateKey, publicKey, index, curveType);
+
+        return Bip32Slip10Secp256k1._(
+            keyData: Bip32KeyData(
+              chainCode: Bip32ChainCode(result.item2),
+              depth: depth.increase(),
+              index: index,
+              parentFingerPrint: fingerPrint,
+            ),
+            keyNetVer: keyNetVersions,
+            privKey: result.item1,
+            pubKey: null); // hardened派生后续从私钥计算
+      }
     }
 
     // Check if supported
