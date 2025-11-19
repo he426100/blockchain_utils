@@ -110,41 +110,18 @@ class Bip32Slip10Secp256k1 extends Bip32Base {
             'Private child derivation with not-hardened index is not supported');
       }
       assert(!isPublicOnly);
-
-      // 性能优化第三阶段: 非hardened派生避免重复HMAC和点运算
-      // 只计算一次HMAC,然后通过IPrivateKey.publicKey计算公钥
-      if (!index.isHardened) {
-        final result = (keyDerivator as Bip32Slip10EcdsaDerivator)
-            .ckdPrivNonHardened(privateKey, publicKey, index, curveType);
-
-        // 使用fromPrivateKey构造,会自动从私钥计算公钥
-        // 这比ckdPub的点运算(generator * ilInt + pubKey.point)快
-        return Bip32Slip10Secp256k1.fromPrivateKey(
-          result.item1, // 新私钥字节
+      final result =
+          keyDerivator.ckdPriv(privateKey, publicKey, index, curveType);
+      return Bip32Slip10Secp256k1._(
           keyData: Bip32KeyData(
-            chainCode: Bip32ChainCode(result.item2), // 新chainCode
+            chainCode: Bip32ChainCode(result.item2),
             depth: depth.increase(),
             index: index,
             parentFingerPrint: fingerPrint,
           ),
           keyNetVer: keyNetVersions,
-        );
-      } else {
-        // Hardened派生: 使用原有逻辑
-        final result =
-            keyDerivator.ckdPriv(privateKey, publicKey, index, curveType);
-
-        return Bip32Slip10Secp256k1._(
-            keyData: Bip32KeyData(
-              chainCode: Bip32ChainCode(result.item2),
-              depth: depth.increase(),
-              index: index,
-              parentFingerPrint: fingerPrint,
-            ),
-            keyNetVer: keyNetVersions,
-            privKey: result.item1,
-            pubKey: null); // hardened派生后续从私钥计算
-      }
+          privKey: result.item1,
+          pubKey: null);
     }
 
     // Check if supported
